@@ -26,9 +26,11 @@ class UploadController extends GetxController {
         type: RequestType.image,
         filterOption: FilterOptionGroup(
           imageOption: const FilterOption(
-            sizeConstraint: SizeConstraint(minWidth: 100, maxHeight: 100),
+            sizeConstraint: SizeConstraint(minWidth: 100),
           ),
-          orders: [const OrderOption(type: OrderOptionType.createDate, asc: false)],
+          orders: [
+            const OrderOption(type: OrderOptionType.createDate, asc: false)
+          ],
         ),
       );
       _loadData();
@@ -38,17 +40,23 @@ class UploadController extends GetxController {
   }
 
   void _loadData() async {
-    headerTitle(albums.first.name);
-    await _paginPhotos();
+    if (albums.isEmpty) return;
+    changeAlbum(albums.first);
   }
 
-  Future<void> _paginPhotos() async {
-    var photos = await albums.first.getAssetListPaged(size: 0, page: 20);
+  Future<void> _paginPhotos(AssetPathEntity album) async {
+    var photos = await album.getAssetListPaged(size: 20, page: 0);
     imageList.addAll(photos);
+    if (imageList.isEmpty) return;
     changeSelectedImage(imageList.first);
   }
 
   changeSelectedImage(AssetEntity image) {
     selectedImage(image);
+  }
+
+  changeAlbum(AssetPathEntity album) async {
+    headerTitle(album.name);
+    await _paginPhotos(album);
   }
 }

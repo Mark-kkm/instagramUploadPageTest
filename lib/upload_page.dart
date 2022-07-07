@@ -82,9 +82,12 @@ class UploadPage extends GetView<UploadController> {
                 ),
                 isScrollControlled: controller.albums.length > 5 ? true : false,
                 constraints: BoxConstraints(
-                    maxHeight: MediaQuery.of(Get.context!).size.height - MediaQuery.of(Get.context!).padding.top),
+                    maxHeight: MediaQuery.of(Get.context!).size.height -
+                        MediaQuery.of(Get.context!).padding.top),
                 builder: (_) => SizedBox(
-                  height: controller.albums.length > 5 ? Size.infinite.height : controller.albums.length * 60,
+                  height: controller.albums.length > 5
+                      ? Size.infinite.height
+                      : controller.albums.length * 60,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -105,9 +108,17 @@ class UploadPage extends GetView<UploadController> {
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: List.generate(
                               controller.albums.length,
-                              (index) => Container(
-                                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                                child: Text(controller.albums[index].name),
+                              (index) => GestureDetector(
+                                onTap: () {
+                                  controller
+                                      .changeAlbum(controller.albums[index]);
+                                  Get.back();
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 15, horizontal: 10),
+                                  child: Text(controller.albums[index].name),
+                                ),
                               ),
                             ),
                           ),
@@ -136,7 +147,8 @@ class UploadPage extends GetView<UploadController> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                 decoration: BoxDecoration(
                   color: const Color(0xff808080),
                   borderRadius: BorderRadius.circular(30),
@@ -161,7 +173,8 @@ class UploadPage extends GetView<UploadController> {
                 width: 5,
               ),
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
                   color: Color(0xff808080),
@@ -188,7 +201,7 @@ class UploadPage extends GetView<UploadController> {
         crossAxisSpacing: 1,
       ),
       delegate: SliverChildBuilderDelegate(
-        childCount: 10,
+        childCount: controller.imageList.length,
         (context, index) {
           return _photoWidget(
             controller.imageList[index],
@@ -200,7 +213,10 @@ class UploadPage extends GetView<UploadController> {
                 },
                 child: Obx(
                   () => Opacity(
-                    opacity: controller.imageList[index] == controller.selectedImage.value ? 0.3 : 1,
+                    opacity: controller.imageList[index] ==
+                            controller.selectedImage.value
+                        ? 0.3
+                        : 1,
                     child: Image.memory(
                       data,
                       fit: BoxFit.cover,
@@ -215,7 +231,9 @@ class UploadPage extends GetView<UploadController> {
     );
   }
 
-  Widget _photoWidget(AssetEntity asset, int size, {required Widget Function(Uint8List) builder}) {
+  Widget _photoWidget(AssetEntity asset, int size,
+      {required Widget Function(Uint8List) builder}) {
+    if (asset.id == "0") return Container();
     return FutureBuilder(
       future: asset.thumbnailDataWithSize(ThumbnailSize(size, size)),
       builder: (_, AsyncSnapshot<Uint8List?> snapshot) {
