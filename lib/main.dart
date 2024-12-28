@@ -5,6 +5,8 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:testtete/upload_controller.dart';
 import 'package:testtete/upload_page.dart';
 
+// 테스트
+
 void main() {
   runApp(const MyApp());
 }
